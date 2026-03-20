@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creatify — Content-as-a-Service Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080808;
+    --bg2: #111111;
+    --bg3: #181818;
+    --neon: #00f5a0;
+    --neon2: #00c8ff;
+    --text: #f0f0f0;
+    --muted: #777777;
+    --border: rgba(0,245,160,0.12);
+    --card: #141414;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 5%; background: rgba(8,8,8,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); transition: box-shadow 0.3s; }
+  nav.scrolled { box-shadow: 0 2px 30px rgba(0,245,160,0.06); }
+  .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--text); letter-spacing: -0.5px; }
+  .nav-logo span { color: var(--neon); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--neon); }
+  .nav-cta { background: var(--neon); color: #000; padding: 0.6rem 1.4rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: box-shadow 0.2s, transform 0.2s; }
+  .nav-cta:hover { box-shadow: 0 0 20px rgba(0,245,160,0.4); transform: translateY(-1px); }
+  .hero { min-height: 100vh; display: flex; align-items: center; background: var(--bg); position: relative; overflow: hidden; padding: 8rem 5% 5rem; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 70% 50%, rgba(0,245,160,0.06) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(0,200,255,0.04) 0%, transparent 60%); }
+  .grid-lines { position: absolute; inset: 0; z-index: 0; background-image: linear-gradient(rgba(0,245,160,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,160,0.04) 1px, transparent 1px); background-size: 60px 60px; }
+  .hero-content { position: relative; z-index: 2; max-width: 650px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0,245,160,0.08); border: 1px solid rgba(0,245,160,0.25); color: var(--neon); padding: 0.4rem 1rem; border-radius: 100px; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.5px; margin-bottom: 1.5rem; animation: fadeUp 0.6s ease both; }
+  .hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(2.8rem, 6vw, 4.5rem); font-weight: 800; color: var(--text); line-height: 1.1; letter-spacing: -1px; margin-bottom: 1.5rem; animation: fadeUp 0.6s 0.1s ease both; }
+  .hero h1 span { color: var(--neon); text-shadow: 0 0 30px rgba(0,245,160,0.4); }
+  .hero p { font-size: 1.1rem; color: var(--muted); line-height: 1.7; margin-bottom: 2.5rem; font-weight: 300; animation: fadeUp 0.6s 0.2s ease both; }
+  .hero-buttons { display: flex; gap: 1rem; flex-wrap: wrap; animation: fadeUp 0.6s 0.3s ease both; }
+  .btn-primary { background: var(--neon); color: #000; padding: 0.9rem 2rem; border-radius: 10px; font-weight: 600; font-size: 0.95rem; text-decoration: none; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,245,160,0.35); }
+  .btn-secondary { background: transparent; color: var(--text); padding: 0.9rem 2rem; border-radius: 10px; font-weight: 500; font-size: 0.95rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.15); transition: border-color 0.2s, color 0.2s; }
+  .btn-secondary:hover { border-color: var(--neon); color: var(--neon); }
+  .hero-stats { display: flex; gap: 3rem; margin-top: 4rem; animation: fadeUp 0.6s 0.4s ease both; }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--neon); }
+  .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+  .hero-visual { position: absolute; right: 5%; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 1rem; animation: fadeUp 0.8s 0.5s ease both; }
+  .float-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.2rem 1.5rem; min-width: 220px; }
+  .float-card.neon-border { border-color: rgba(0,245,160,0.3); }
+  .float-card-label { font-size: 0.7rem; color: var(--muted); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 1px; }
+  .float-card-value { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--neon); }
+  .float-card-sub { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+  section { padding: 6rem 5%; }
+  .section-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--neon); margin-bottom: 1rem; }
+  .section-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: var(--text); line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 1rem; }
+  .section-subtitle { font-size: 1.05rem; color: var(--muted); line-height: 1.7; max-width: 560px; }
+  .problem { background: var(--bg2); }
+  .problem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+  .problem-card { background: var(--card); border-radius: 16px; padding: 2rem; border: 1px solid rgba(255,255,255,0.06); transition: transform 0.3s, border-color 0.3s; }
+  .problem-card:hover { transform: translateY(-4px); border-color: rgba(0,245,160,0.2); }
+  .problem-icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(0,245,160,0.08); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1.2rem; }
+  .problem-card h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 0.6rem; }
+  .problem-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
+  .steps { background: var(--bg); }
+  .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 3rem; position: relative; }
+  .steps-grid::before { content: ''; position: absolute; top: 32px; left: 10%; right: 10%; height: 1px; background: linear-gradient(90deg, transparent, var(--neon), transparent); z-index: 0; opacity: 0.4; }
+  .step { text-align: center; position: relative; z-index: 1; }
+  .step-num { width: 64px; height: 64px; border-radius: 50%; background: var(--bg2); color: var(--neon); font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; border: 1px solid rgba(0,245,160,0.3); box-shadow: 0 0 20px rgba(0,245,160,0.1); }
+  .step h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+  .step p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+  .for-who { background: var(--bg2); }
+  .for-who-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; }
+  .for-card { border-radius: 20px; padding: 2.5rem; }
+  .for-card.brands { background: var(--card); border: 1px solid rgba(0,245,160,0.2); }
+  .for-card.creators { background: var(--card); border: 1px solid rgba(0,200,255,0.15); }
+  .for-card h3 { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .for-card.brands h3 { color: var(--neon); }
+  .for-card.creators h3 { color: var(--neon2); }
+  .for-card .sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+  .for-card ul { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+  .for-card ul li { display: flex; align-items: flex-start; gap: 0.7rem; font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
+  .check { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; margin-top: 1px; font-weight: 700; }
+  .for-card.brands .check { background: rgba(0,245,160,0.1); color: var(--neon); }
+  .for-card.creators .check { background: rgba(0,200,255,0.1); color: var(--neon2); }
+  .revenue { background: var(--bg); }
+  .revenue-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 3rem; }
+  .revenue-card { background: var(--card); border-radius: 16px; padding: 1.8rem; text-align: center; border: 1px solid rgba(255,255,255,0.06); transition: transform 0.3s, border-color 0.3s; }
+  .revenue-card:hover { transform: translateY(-3px); border-color: rgba(0,245,160,0.2); }
+  .revenue-card.highlight { border-color: rgba(0,245,160,0.3); box-shadow: 0 0 40px rgba(0,245,160,0.08); }
+  .revenue-card .rev-num { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--neon); margin-bottom: 0.3rem; }
+  .revenue-card .rev-label { font-weight: 600; font-size: 0.9rem; color: var(--text); margin-bottom: 0.5rem; }
+  .revenue-card .rev-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+  .botswana { background: var(--bg2); }
+  .bots-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 3rem; }
+  .bots-card { background: var(--card); border-radius: 16px; border: 1px solid rgba(255,255,255,0.06); padding: 2rem 1.5rem; text-align: center; transition: border-color 0.3s; }
+  .bots-card:hover { border-color: rgba(0,245,160,0.2); }
+  .bots-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .bots-card h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--neon); margin-bottom: 0.5rem; }
+  .bots-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+  .cta-section { background: var(--bg); text-align: center; padding: 8rem 5%; position: relative; overflow: hidden; }
+  .cta-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(0,245,160,0.06) 0%, transparent 70%); }
+  .cta-section h2 { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 800; color: var(--text); margin-bottom: 1rem; position: relative; }
+  .cta-section h2 span { color: var(--neon); text-shadow: 0 0 30px rgba(0,245,160,0.4); }
+  .cta-section p { color: var(--muted); font-size: 1.05rem; margin-bottom: 2.5rem; position: relative; }
+  .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; position: relative; }
+  footer { background: #050505; color: var(--muted); padding: 2rem 5%; text-align: center; font-size: 0.85rem; border-top: 1px solid var(--border); }
+  footer span { color: var(--neon); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) {
+    .hero-visual { display: none; }
+    .problem-grid, .steps-grid, .revenue-grid, .bots-grid { grid-template-columns: 1fr; }
+    .for-who-grid { grid-template-columns: 1fr; }
+    .steps-grid::before { display: none; }
+    .hero-stats { gap: 1.5rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+<nav id="navbar">
+  <div class="nav-logo">Creat<span>ify</span></div>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#forwho">For you</a></li>
+    <li><a href="#revenue">Pricing</a></li>
+    <li><a href="#botswana">Why Botswana</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Get Started</a>
+</nav>
+<section class="hero" id="hero">
+  <div class="grid-lines"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🇧🇼 Built for Botswana</div>
+    <h1>Where <span>Creators</span> Meet Brands</h1>
+    <p>Creatify is a digital marketplace connecting talented UGC creators with brands seeking authentic short-form video content — fast, affordable, and scalable.</p>
+    <div class="hero-buttons">
+      <a href="#forwho" class="btn-primary">Join as a Creator</a>
+      <a href="#forwho" class="btn-secondary">I'm a Brand →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num"><span class="counter" data-target="3">0</span>–5 days</div>
+        <div class="stat-label">Content turnaround</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num"><span class="counter" data-target="3">0</span>x</div>
+        <div class="stat-label">Higher engagement</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num"><span class="counter" data-target="48">0</span>hrs</div>
+        <div class="stat-label">Creator payout</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="float-card neon-border">
+      <div class="float-card-label">Platform commission</div>
+      <div class="float-card-value">15–20%</div>
+      <div class="float-card-sub">per completed project</div>
+    </div>
+    <div class="float-card">
+      <div class="float-card-label">Creator onboarding</div>
+      <div class="float-card-value">P250</div>
+      <div class="float-card-sub">one-time fee</div>
+    </div>
+    <div class="float-card">
+      <div class="float-card-label">Monthly retainer</div>
+      <div class="float-card-value">P500+</div>
+      <div class="float-card-sub">for regular brand content</div>
+    </div>
+  </div>
+</section>
+<section class="problem" id="problem">
+  <div class="reveal">
+    <div class="section-label">The Problem</div>
+    <h2 class="section-title">The gap no one is filling</h2>
+    <p class="section-subtitle">Creators struggle to find paid work. Brands struggle to find affordable content. No structured platform exists in Botswana to connect both sides.</p>
+  </div>
+  <div class="problem-grid">
+    <div class="problem-card reveal">
+      <div class="problem-icon">🎥</div>
+      <h3>Creators Without Opportunities</h3>
+      <p>Talented individuals with smartphones and editing skills have no structured marketplace to monetize their abilities commercially.</p>
+    </div>
+    <div class="problem-card reveal">
+      <div class="problem-icon">💼</div>
+      <h3>Businesses Need Solutions</h3>
+      <p>SMEs require affordable content marketing but face agency costs of P5,000+ per video with 2–4 week turnaround times.</p>
+    </div>
+    <div class="problem-card reveal">
+      <div class="problem-icon">🔗</div>
+      <h3>No Platform Exists</h3>
+      <p>There is no structured, trusted marketplace in Botswana connecting creators with brands in a managed, professional way.</p>
+    </div>
+  </div>
+</section>
+<section class="steps" id="how">
+  <div style="text-align:center" class="reveal">
+    <div class="section-label">The Process</div>
+    <h2 class="section-title">How Creatify works</h2>
+    <p class="section-subtitle" style="margin:0 auto">From brief to delivery in days, not weeks.</p>
+  </div>
+  <div class="steps-grid">
+    <div class="step reveal">
+      <div class="step-num">1</div>
+      <h3>Brands Post Needs</h3>
+      <p>Businesses submit content requirements with specifications, timeline and budget.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">2</div>
+      <h3>Creators Apply</h3>
+      <p>Talented individuals apply or get automatically matched based on skills and past performance.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">3</div>
+      <h3>Content Created</h3>
+      <p>Selected creators produce authentic short-form UGC content for the campaign.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">4</div>
+      <h3>Payment Processed</h3>
+      <p>Secure automatic payment within 48 hours once content meets requirements.</p>
+    </div>
+  </div>
+</section>
+<section class="for-who" id="forwho">
+  <div class="reveal">
+    <div class="section-label">Who It's For</div>
+    <h2 class="section-title">Built for both sides</h2>
+  </div>
+  <div class="for-who-grid">
+    <div class="for-card brands reveal">
+      <h3>For Brands</h3>
+      <p class="sub">Startups, SMEs & enterprises</p>
+      <ul>
+        <li><span class="check">✓</span>Authentic UGC content in 3–5 days</li>
+        <li><span class="check">✓</span>Fraction of traditional agency costs</li>
+        <li><span class="check">✓</span>Vetted creator pool with verified ratings</li>
+        <li><span class="check">✓</span>Automated contracts and workflows</li>
+        <li><span class="check">✓</span>Real-time campaign tracking dashboard</li>
+        <li><span class="check">✓</span>Scalable content production on demand</li>
+      </ul>
+    </div>
+    <div class="for-card creators reveal">
+      <h3>For Creators</h3>
+      <p class="sub">UGC creators, videographers & social media creators</p>
+      <ul>
+        <li><span class="check">✓</span>Access to paid commercial brand projects</li>
+        <li><span class="check">✓</span>Verified portfolio with real campaign work</li>
+        <li><span class="check">✓</span>Guaranteed 48-hour payment</li>
+        <li><span class="check">✓</span>Smart matching based on your skills</li>
+        <li><span class="check">✓</span>Performance analytics and insights</li>
+        <li><span class="check">✓</span>Training resources and industry tips</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<section class="revenue" id="revenue">
+  <div style="text-align:center" class="reveal">
+    <div class="section-label">Pricing Model</div>
+    <h2 class="section-title">Simple, transparent pricing</h2>
+    <p class="section-subtitle" style="margin:0 auto">No hidden fees. Everyone knows what they pay and earn upfront.</p>
+  </div>
+  <div class="revenue-grid">
+    <div class="revenue-card reveal">
+      <div class="rev-num">15–20%</div>
+      <div class="rev-label">Project Commission</div>
+      <div class="rev-desc">Platform fee on every completed content project</div>
+    </div>
+    <div class="revenue-card highlight reveal">
+      <div class="rev-num">P500+</div>
+      <div class="rev-label">Monthly Retainer</div>
+      <div class="rev-desc">For brands needing regular ongoing content production</div>
+    </div>
+    <div class="revenue-card reveal">
+      <div class="rev-num">P250</div>
+      <div class="rev-label">Creator Onboarding</div>
+      <div class="rev-desc">One-time training and platform access fee for creators</div>
+    </div>
+    <div class="revenue-card reveal">
+      <div class="rev-num">+</div>
+      <div class="rev-label">Premium Add-Ons</div>
+      <div class="rev-desc">Fast delivery, scripting, advanced editing and priority matching</div>
+    </div>
+  </div>
+</section>
+<section class="botswana" id="botswana">
+  <div class="reveal">
+    <div class="section-label">Why Here</div>
+    <h2 class="section-title">Why Botswana?</h2>
+    <p class="section-subtitle">Creatify is designed specifically for the Botswana market and its unique opportunities.</p>
+  </div>
+  <div class="bots-grid">
+    <div class="bots-card reveal">
+      <div class="bots-icon">👥</div>
+      <h3>Youth Unemployment</h3>
+      <p>High youth unemployment creates a large pool of motivated creators seeking income opportunities.</p>
+    </div>
+    <div class="bots-card reveal">
+      <div class="bots-icon">🏢</div>
+      <h3>Growing SME Sector</h3>
+      <p>Expanding small businesses need affordable marketing but lack resources for traditional agencies.</p>
+    </div>
+    <div class="bots-card reveal">
+      <div class="bots-icon">📱</div>
+      <h3>Social Media Adoption</h3>
+      <p>Strong social media usage across demographics provides a ready market for digital content.</p>
+    </div>
+    <div class="bots-card reveal">
+      <div class="bots-icon">💡</div>
+      <h3>Untapped Demand</h3>
+      <p>No structured platform exists yet — Creatify is the first mover in this space in Botswana.</p>
+    </div>
+  </div>
+</section>
+<section class="cta-section" id="cta">
+  <div class="reveal">
+    <h2>Ready to <span>get started?</span></h2>
+    <p>Join Creatify today — whether you're a brand looking for content or a creator looking for work.</p>
+    <div class="cta-buttons">
+      <a href="#" class="btn-primary">Join as a Creator — P250</a>
+      <a href="#" class="btn-secondary">Post a Campaign as a Brand</a>
+    </div>
+  </div>
+</section>
+<footer>
+  <p>© 2026 <span>Creatify</span> — Content-as-a-Service Platform. Built for Botswana. 🇧🇼</p>
+</footer>
+<script>
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 40); });
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => { if (entry.isIntersecting) setTimeout(() => entry.target.classList.add('visible'), i * 80); });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+  const counters = document.querySelectorAll('.counter');
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const target = +entry.target.dataset.target;
+        let current = 0; const step = target / 30;
+        const timer = setInterval(() => {
+          current += step;
+          if (current >= target) { current = target; clearInterval(timer); }
+          entry.target.textContent = Math.floor(current);
+        }, 40);
+        counterObserver.unobserve(entry.target);
+      }
+    });
+  });
+  counters.forEach(c => counterObserver.observe(c));
+</script>
+</body>
+</html>
